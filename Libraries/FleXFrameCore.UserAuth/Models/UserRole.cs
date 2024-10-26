@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FleXFrameCore.PermissionManagement.Models
+namespace FleXFrameCore.UserAuth.Models
 {
     public class UserRole
     {
@@ -17,7 +17,7 @@ namespace FleXFrameCore.PermissionManagement.Models
         public DateTime? ExpiryDate { get; set; }
 
         public required virtual User User { get; set; }
-        public required virtual Role Role { get; set; } 
+        public required virtual Role Role { get; set; }
     }
 
 }

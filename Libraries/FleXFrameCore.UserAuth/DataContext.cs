@@ -1,7 +1,7 @@
-﻿using FleXFrameCore.PermissionManagement.Models;
+﻿using FleXFrameCore.UserAuth.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace FleXFrameCore.PermissionManagement
+namespace FleXFrameCore.UserAuth
 {
     public class DataContext : DbContext
     {

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FleXFrameCore.UserManagement.Interfaces;
 
-namespace FleXFrameCore.PermissionManagement.Models
+namespace FleXFrameCore.UserManagement.Models
 {
-    public class User
+    public class User : IUser
     {
         public enum UserStatuses
         {
@@ -29,8 +25,6 @@ namespace FleXFrameCore.PermissionManagement.Models
         public required string CreatedBy { get; set; }
         public DateTime? LastModified { get; set; }
         public string? ModifiedBy { get; set; }
-
-        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     }
 
 }

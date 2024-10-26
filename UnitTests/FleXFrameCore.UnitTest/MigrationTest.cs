@@ -1,4 +1,5 @@
-﻿using FleXFrameCore.PermissionManagement; // Ensure correct path to your DataContext
+﻿
+using FleXFrameCore.UserAuth;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -10,7 +11,7 @@ namespace FleXFrameCore.UnitTest
 
         public MigrationTest()
         {
-            var connectionString = "Data Source=IND4-PC;Integrated Security=True;Database=TestDB;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            var connectionString = "Data Source=MSI;Integrated Security=True;Database=TestDB;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
             _options = new DbContextOptionsBuilder<DataContext>()
                 .UseSqlServer(connectionString)
                 .Options;
