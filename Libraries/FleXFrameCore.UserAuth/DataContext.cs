@@ -13,6 +13,9 @@ namespace FleXFrameCore.UserAuth
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Setting a default schema for all tables in this context
+            modelBuilder.HasDefaultSchema("UserAuth");
+
             // Configuring UserRole many-to-many relationship
             modelBuilder.Entity<UserRole>()
                 .HasKey(ur => ur.UserRoleID); // Composite primary key if needed
@@ -49,8 +52,7 @@ namespace FleXFrameCore.UserAuth
         }
 
         // Constructor for configuring DbContext options
-        public DataContext(DbContextOptions<DataContext> options)
-            : base(options)
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
         }
     }
