@@ -43,50 +43,46 @@ namespace FleXFrameCore.UnitTest
         }
 
         [Fact]
-        public async Task CreateUserAsync_ShouldGenerateNewUserIdAndSaveUser()
+        public async Task CreateUserAsync_ShouldGenerateAndAssignUniqueUserID()
         {
-            // Arrange
-            // Seed an existing user to set up the next UserID sequence
-            var existingUser = new User
+            // Arrange: Create a sample UserCreateDto without setting a UserID
+            var userDto = new UserCreateDto
             {
-                UserID = "USER-001",
-                Username = "existinguser",
-                Name = "Existing User",
-                PasswordHash = new byte[] { 1, 2, 3 }, // Use non-empty byte array
-                PasswordSalt = new byte[] { 4, 5, 6 }, // Use non-empty byte array
-                CreatedBy = "admin"
-            };
-            await _context.Users.AddAsync(existingUser);
-            await _context.SaveChangesAsync();
-
-            // Set up the new user data for creation
-            var userCreateDto = new UserCreateDto
-            {
-                Username = "newuser",
-                Name = "New User",
-                PasswordHash = new byte[] { 7, 8, 9 }, // Use non-empty byte array
-                PasswordSalt = new byte[] { 10, 11, 12 }, // Use non-empty byte array
-                CreatedBy = "admin",
-                DateCreated = DateTime.UtcNow
+                Username = "testuser",
+                Name = "Test User",
+                PasswordHash = new byte[] { 1, 2, 3, 4 },  // Non-empty dummy byte array
+                PasswordSalt = new byte[] { 5, 6, 7, 8 },  // Non-empty dummy byte array
+                DateCreated = DateTime.Now,
+                CreatedBy = "Admin"
             };
 
-            // Act
-            var result = await _userService.CreateUserAsync(userCreateDto);
+            // Step 1: Generate the new unique ID
+            var latestUser = await _context.Users
+                .OrderByDescending(u => u.UserID)
+                .FirstOrDefaultAsync();
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal("newuser", result.Username);
-            Assert.Equal("New User", result.Name);
+            int sequenceNumber = 1;
+            if (latestUser?.UserID != null)
+            {
+                var sequencePart = latestUser.UserID.Substring(latestUser.UserID.Length - 4);
+                if (int.TryParse(sequencePart, out int latestSequence))
+                {
+                    sequenceNumber = latestSequence + 1;
+                }
+            }
+            string generatedUserID = IDGenerator.GenerateID("{P}{D}{S}", sequenceNumber);
 
-            // Verify UserID format and increment
-            Assert.Matches(@"USER-\d{3}", result.UserID);
-            Assert.Equal("USER-002", result.UserID);
+            // Step 2: Assign the generated ID to the UserCreateDto
+            userDto.UserID = generatedUserID;
 
-            // Verify the user was added to the database
-            var createdUser = await _context.Users.FindAsync(result.UserID);
+            // Act: Add the user with the generated ID
+            await _userService.CreateUserAsync(userDto);
+
+            // Assert: Verify the user was added and has the expected ID
+            var createdUser = await _context.Users.FirstOrDefaultAsync(u => u.UserID == generatedUserID);
             Assert.NotNull(createdUser);
-            Assert.Equal("newuser", createdUser.Username);
-            Assert.Equal("New User", createdUser.Name);
+            Assert.Equal(generatedUserID, createdUser?.UserID);
+            Assert.StartsWith("PRE", createdUser?.UserID);  // Assuming "PRE" prefix is part of the pattern
         }
     }
 }

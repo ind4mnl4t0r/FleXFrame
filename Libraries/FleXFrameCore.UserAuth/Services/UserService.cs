@@ -25,38 +25,21 @@ namespace FleXFrameCore.UserAuth.Services
             _mapper = mapper;
         }
 
-        public async Task<User> CreateUserAsync(UserCreateDto userCreateDto)
+        public async Task<string> CreateUserAsync(UserCreateDto userCreateDto)
         {
-            // Step 1: Retrieve the last user's ID (assuming IDs are sorted in ascending order)
-            var lastUser = await _context.Users
-                .OrderByDescending(u => u.UserID)
-                .FirstOrDefaultAsync();
+            // If the user has provided a custom UserID, use it.
+            string newUserID = userCreateDto.UserID ?? GenerateDefaultUserID();
 
-            int newSequenceNumber = 1; // Default sequence number if no users exist
+            // Map UserCreateDto to User entity
+            var newUser = _mapper.Map<User>(userCreateDto);
+            newUser.UserID = newUserID;
+            newUser.DateCreated = DateTime.Now;
 
-            if (lastUser != null)
-            {
-                // Extract the numeric part of the last UserID
-                var match = Regex.Match(lastUser.UserID, @"\d+$"); // Finds digits at the end of the ID
-                if (match.Success)
-                {
-                    // Increment the extracted number by 1
-                    newSequenceNumber = int.Parse(match.Value) + 1;
-                }
-            }
-
-            // Step 2: Generate a new ID
-            string newUserId = IDGenerator.GenerateID("USER-{S}", newSequenceNumber, 3);
-
-            // Step 3: Map the UserCreateDto to a User entity and set the new ID
-            var user = _mapper.Map<User>(userCreateDto);
-            user.UserID = newUserId;
-
-            // Step 4: Add the user to the context and save changes
-            await _context.Users.AddAsync(user);
+            // Save the new user to the database
+            await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
 
-            return user;
+            return newUserID;  // Return the UserID back to the caller
         }
 
         public async Task<Result<UserViewDto>> GetUserByIdAsync(string userId)
@@ -93,6 +76,28 @@ namespace FleXFrameCore.UserAuth.Services
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        // Default UserID
+        private string GenerateDefaultUserID()
+        {
+            // Retrieve the latest user to determine the current sequence number
+            var latestUser = _context.Users.OrderByDescending(u => u.UserID).FirstOrDefault();
+
+            int sequenceNumber = 1; // Default sequence if no users exist yet
+
+            if (latestUser?.UserID != null)
+            {
+                // Parse the sequence part of the ID from the latest user
+                var sequencePart = latestUser.UserID.Substring(latestUser.UserID.Length - 4);
+                if (int.TryParse(sequencePart, out int latestSequence))
+                {
+                    sequenceNumber = latestSequence + 1; // Increment the sequence number
+                }
+            }
+
+            // Generate a new unique ID using the provided pattern
+            return IDGenerator.GenerateID("USER-{S}", sequenceNumber);
         }
     }
 }
