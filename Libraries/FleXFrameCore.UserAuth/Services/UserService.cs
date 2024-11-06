@@ -42,6 +42,13 @@ namespace FleXFrameCore.UserAuth.Services
             return newUserID;  // Return the UserID back to the caller
         }
 
+        public async Task<User?> GetLatestUserAsync()
+        {
+            return await _context.Users
+                .OrderByDescending(u => u.UserID)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<Result<UserViewDto>> GetUserByIdAsync(string userId)
         {
             var user = await _context.Users.FindAsync(userId);

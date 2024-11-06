@@ -4,6 +4,7 @@ using FleXFrameCore.UserAuth.DTOs;
 using FleXFrameCore.UserAuth.Helpers;
 using FleXFrameCore.UserAuth.Models;
 using FleXFrameCore.UserAuth.Services;
+using FleXFrameCore.UtilityHub;
 using FleXFrameCore.UtilityHub.ErrorHandling;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -53,21 +54,26 @@ namespace FleXFrameCoreConsole
             // Generate a new user ID using the IDGenerator
             using (var scope = serviceProvider.CreateScope())
             {
-                // Create a new UserCreateDto object
+                var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+                // Generate salt and hash the password using PasswordEngine
+                string plainPassword = "YourSecurePassword"; // Replace with actual password input from the user
+                byte[] salt = PasswordEngine.GenerateSalt();
+                byte[] hashedPassword = PasswordEngine.HashPassword(plainPassword, salt);
+
+                // Create a new UserCreateDto object with hashed password and salt
                 var userDto = new UserCreateDto
                 {
                     Username = "newuser",
                     Name = "New User",
-                    PasswordHash = new byte[] { 1, 2, 3, 4 }, // Provide a simple hash for testing
-                    PasswordSalt = new byte[] { 5, 6, 7, 8 }, // Provide a simple salt for testing
+                    PasswordHash = hashedPassword,
+                    PasswordSalt = salt,
                     DateCreated = DateTime.Now,
                     CreatedBy = "System"
                 };
 
-                var context = scope.ServiceProvider.GetRequiredService<DataContext>();
-
+                // Generate a unique user ID for the new user
                 var latestUser = await context.Users.OrderByDescending(u => u.UserID).FirstOrDefaultAsync();
-
                 int sequenceNumber = 1;
                 if (latestUser?.UserID != null)
                 {
@@ -77,8 +83,6 @@ namespace FleXFrameCoreConsole
                         sequenceNumber = latestSequence + 1;
                     }
                 }
-
-                // Generate the new user ID using IDGenerator
                 string newUserID = IDGenerator.GenerateID("CUST-USER-{S}", sequenceNumber);
 
                 // Assign the generated ID to the user DTO

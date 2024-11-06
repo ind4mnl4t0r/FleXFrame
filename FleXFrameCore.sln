@@ -11,11 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleXFrameCore.UnitTest", "U
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleXFrameCore.UserAuth", "Libraries\FleXFrameCore.UserAuth\FleXFrameCore.UserAuth.csproj", "{1AAEAD49-12F9-4D99-9B52-F246CB6DA00F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FleXFrameCore.UtilityHub", "FleXFrameCore.UtilityHub\FleXFrameCore.UtilityHub.csproj", "{66D3300A-BCEE-4B37-9752-66D020DF9BBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleXFrameCore.UtilityHub", "FleXFrameCore.UtilityHub\FleXFrameCore.UtilityHub.csproj", "{66D3300A-BCEE-4B37-9752-66D020DF9BBA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Applications", "{1F55CFD6-128F-45C7-A2D1-90952896AF43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FleXFramCoreConsole", "FleXFramCoreConsole\FleXFramCoreConsole.csproj", "{4FD7D39A-8295-46D6-B395-7BE1AE93D9CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleXFramCoreConsole", "FleXFramCoreConsole\FleXFramCoreConsole.csproj", "{4FD7D39A-8295-46D6-B395-7BE1AE93D9CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FleXFrameCore.WinForms", "FleXFrameCore.WinForms\FleXFrameCore.WinForms.csproj", "{E10D8102-1F63-4A96-B2B8-6C1790ADC96B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{4FD7D39A-8295-46D6-B395-7BE1AE93D9CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FD7D39A-8295-46D6-B395-7BE1AE93D9CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FD7D39A-8295-46D6-B395-7BE1AE93D9CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E10D8102-1F63-4A96-B2B8-6C1790ADC96B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E10D8102-1F63-4A96-B2B8-6C1790ADC96B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E10D8102-1F63-4A96-B2B8-6C1790ADC96B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E10D8102-1F63-4A96-B2B8-6C1790ADC96B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +54,7 @@ Global
 		{1AAEAD49-12F9-4D99-9B52-F246CB6DA00F} = {1DB8F188-5DC7-459F-B06C-7A4FB54C689A}
 		{66D3300A-BCEE-4B37-9752-66D020DF9BBA} = {1DB8F188-5DC7-459F-B06C-7A4FB54C689A}
 		{4FD7D39A-8295-46D6-B395-7BE1AE93D9CA} = {1F55CFD6-128F-45C7-A2D1-90952896AF43}
+		{E10D8102-1F63-4A96-B2B8-6C1790ADC96B} = {1F55CFD6-128F-45C7-A2D1-90952896AF43}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {081E6644-4704-4C44-AECC-EFF4E022D9EF}
