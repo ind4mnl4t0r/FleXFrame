@@ -17,19 +17,18 @@ namespace FleXFrameCore.UserAuth.Models
             Deleted
         }
 
-        [Required]
         [MaxLength(20)]
-        public required string UserID { get; set; }
+        public string? UserID { get; set; }
 
         [Required]
         [MaxLength(50)]
         public required string Username { get; set; }
 
         [Required]
-        public required byte[] PasswordHash { get; set; }
+        public byte[]? PasswordHash { get; set; }
 
         [Required]
-        public required byte[] PasswordSalt { get; set; }
+        public byte[]? PasswordSalt { get; set; }
 
         [Required]
         [MaxLength(250)]

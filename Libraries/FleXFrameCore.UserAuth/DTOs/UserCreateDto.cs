@@ -9,12 +9,12 @@ namespace FleXFrameCore.UserAuth.DTOs
 {
     public class UserCreateDto
     {
-        public string UserID { get; set; }
-        public required string Username { get; set; }
-        public required string Name { get; set; }
-        public required byte[] PasswordHash { get; set; }
-        public required byte[] PasswordSalt { get; set; }
+        public string? UserID { get; set; }
+        public string? Username { get; set; }
+        public string? Name { get; set; }
+        public byte[]? PasswordHash { get; set; }
+        public byte[]? PasswordSalt { get; set; }
         public DateTime DateCreated { get; set; }
-        public required string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
     }
 }
