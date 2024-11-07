@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FleXFrameCore.UtilityHub\FleXFrameCore.UtilityHub.csproj" />
     <ProjectReference Include="..\Libraries\FleXFrameCore.UserAuth\FleXFrameCore.UserAuth.csproj" />
+    <ProjectReference Include="..\Libraries\FleXFrameCore.UtilityHub.WinForms\FleXFrameCore.UtilityHub.WinForms.csproj" />
   </ItemGroup>
 
   <ItemGroup>

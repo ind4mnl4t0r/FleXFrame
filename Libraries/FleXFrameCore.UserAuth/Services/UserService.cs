@@ -42,6 +42,21 @@ namespace FleXFrameCore.UserAuth.Services
             return newUserID;  // Return the UserID back to the caller
         }
 
+        public async Task<bool> ValidateUserAsync(string username, string password)
+        {
+            // Retrieve the user from the database
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+
+            // If user is not found, return false
+            if (user == null) return false;
+
+            // Hash the input password with the stored salt
+            var hashedPassword = PasswordEngine.HashPassword(password, user.PasswordSalt);
+
+            // Compare the hashed password with the stored hash
+            return hashedPassword.SequenceEqual(user.PasswordHash);
+        }
+
         public async Task<User?> GetLatestUserAsync()
         {
             return await _context.Users

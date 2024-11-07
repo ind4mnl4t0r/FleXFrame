@@ -37,7 +37,7 @@ namespace FleXFrameCore.WinForms
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Start the main form using the DI provider
-            var mainForm = _serviceProvider.GetRequiredService<UserRegistrationForm>();
+            var mainForm = _serviceProvider.GetRequiredService<DashboardForm>();
             Application.Run(mainForm);
         }
 
@@ -53,7 +53,7 @@ namespace FleXFrameCore.WinForms
             
 
             // Register the main form so DI can inject services into it
-            services.AddScoped<UserRegistrationForm>();
+            services.AddScoped<DashboardForm>();
         }
 
         private static void ApplyMigrations()
