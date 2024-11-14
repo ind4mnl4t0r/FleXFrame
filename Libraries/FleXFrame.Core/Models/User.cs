@@ -9,6 +9,7 @@ namespace FleXFrame.Core.Models
 {
     public class User
     {
+        // Login Information
         public enum UserStatuses
         {
             Active,
@@ -17,8 +18,10 @@ namespace FleXFrame.Core.Models
             Deleted
         }
 
+        [Key]
+        [Required]
         [MaxLength(20)]
-        public string? UserID { get; set; }
+        public required string UserID { get; set; }
 
         [Required]
         [MaxLength(50)]
@@ -30,6 +33,8 @@ namespace FleXFrame.Core.Models
         [Required]
         public byte[]? PasswordSalt { get; set; }
 
+
+        // Personal Information
         [Required]
         [MaxLength(250)]
         public required string Name { get; set; }
@@ -41,11 +46,10 @@ namespace FleXFrame.Core.Models
         public string? Phone { get; set; }
 
 
+        // User Status
         public bool IsActive { get; set; }
 
-
         public UserStatuses? UserStatus { get; set; }
-
 
         public DateTime DateCreated { get; set; }
 
@@ -53,9 +57,7 @@ namespace FleXFrame.Core.Models
         [MaxLength(20)]
         public required string CreatedBy { get; set; }
 
-
         public DateTime? LastModified { get; set; }
-
 
         public string? ModifiedBy { get; set; }
 

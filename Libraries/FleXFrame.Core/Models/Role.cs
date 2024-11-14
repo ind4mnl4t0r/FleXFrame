@@ -9,6 +9,7 @@ namespace FleXFrame.Core.Models
 {
     public class Role
     {
+        [Key]
         [Required]
         [MaxLength(20)]
         public required string RoleID { get; set; }

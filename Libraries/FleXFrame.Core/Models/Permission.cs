@@ -30,6 +30,7 @@ namespace FleXFrame.Core.Models
             Global
         }
 
+        [Key]
         [Required]
         [MaxLength(20)]
         public required string PermissionID { get; set; }
