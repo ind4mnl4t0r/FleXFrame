@@ -25,7 +25,8 @@ namespace FleXFrame.Core.Models
         [ForeignKey("Role")]
         public required string RoleID { get; set; }
 
-        public DateTime DateAssigned { get; set; }
+        [Required]
+        public required DateTime DateAssigned { get; set; }
 
         [Required]
         [MaxLength(20)]

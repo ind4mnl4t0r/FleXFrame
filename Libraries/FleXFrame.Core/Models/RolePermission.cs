@@ -24,7 +24,8 @@ namespace FleXFrame.Core.Models
         [MaxLength(20)]
         public required string PermissionID { get; set; }
 
-        public DateTime DateAssigned { get; set; }
+        [Required]
+        public required DateTime DateAssigned { get; set; }
 
         [Required]
         [MaxLength(20)]

@@ -55,7 +55,9 @@ namespace FleXFrame.Core.Models
 
         public int PriorityLevel { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        // Audit Fields
+        [Required]
+        public required DateTime DateCreated { get; set; }
 
         [Required]
         [MaxLength(20)]

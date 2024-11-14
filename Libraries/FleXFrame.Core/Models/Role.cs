@@ -21,7 +21,9 @@ namespace FleXFrame.Core.Models
         [MaxLength(500)]
         public string? Description { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        // Audit Fields
+        [Required]
+        public required DateTime DateCreated { get; set; }
 
         [Required]
         [MaxLength(20)]
@@ -30,10 +32,6 @@ namespace FleXFrame.Core.Models
         public DateTime? LastModified { get; set; }
 
         public string? ModifiedBy { get; set; }
-
-        public bool IsSystemRole { get; set; }
-
-        public int PriorityLevel { get; set; }
 
 
         public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
