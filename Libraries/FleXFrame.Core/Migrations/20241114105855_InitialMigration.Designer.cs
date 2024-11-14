@@ -12,21 +12,20 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FleXFrame.Core.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241027063027_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241114105855_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("UserAuth")
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("FleXFrameCore.UserAuth.Models.Permission", b =>
+            modelBuilder.Entity("FleXFrame.Core.Models.Permission", b =>
                 {
                     b.Property<string>("PermissionID")
                         .HasMaxLength(20)
@@ -76,7 +75,7 @@ namespace FleXFrame.Core.Migrations
                     b.ToTable("Permissions", "UserAuth");
                 });
 
-            modelBuilder.Entity("FleXFrameCore.UserAuth.Models.Role", b =>
+            modelBuilder.Entity("FleXFrame.Core.Models.Role", b =>
                 {
                     b.Property<string>("RoleID")
                         .HasMaxLength(20)
@@ -94,17 +93,11 @@ namespace FleXFrame.Core.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<bool>("IsSystemRole")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PriorityLevel")
-                        .HasColumnType("int");
 
                     b.Property<string>("RoleName")
                         .IsRequired()
@@ -116,7 +109,7 @@ namespace FleXFrame.Core.Migrations
                     b.ToTable("Roles", "UserAuth");
                 });
 
-            modelBuilder.Entity("FleXFrameCore.UserAuth.Models.RolePermission", b =>
+            modelBuilder.Entity("FleXFrame.Core.Models.RolePermission", b =>
                 {
                     b.Property<string>("RolePermissionID")
                         .HasMaxLength(20)
@@ -155,7 +148,7 @@ namespace FleXFrame.Core.Migrations
                     b.ToTable("RolePermissions", "UserAuth");
                 });
 
-            modelBuilder.Entity("FleXFrameCore.UserAuth.Models.User", b =>
+            modelBuilder.Entity("FleXFrame.Core.Models.User", b =>
                 {
                     b.Property<string>("UserID")
                         .HasMaxLength(20)
@@ -212,7 +205,7 @@ namespace FleXFrame.Core.Migrations
                     b.ToTable("Users", "UserAuth");
                 });
 
-            modelBuilder.Entity("FleXFrameCore.UserAuth.Models.UserRole", b =>
+            modelBuilder.Entity("FleXFrame.Core.Models.UserRole", b =>
                 {
                     b.Property<string>("UserRoleID")
                         .HasMaxLength(20)
@@ -251,15 +244,15 @@ namespace FleXFrame.Core.Migrations
                     b.ToTable("UserRoles", "UserAuth");
                 });
 
-            modelBuilder.Entity("FleXFrameCore.UserAuth.Models.RolePermission", b =>
+            modelBuilder.Entity("FleXFrame.Core.Models.RolePermission", b =>
                 {
-                    b.HasOne("FleXFrameCore.UserAuth.Models.Permission", "Permission")
+                    b.HasOne("FleXFrame.Core.Models.Permission", "Permission")
                         .WithMany("RolePermissions")
                         .HasForeignKey("PermissionID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FleXFrameCore.UserAuth.Models.Role", "Role")
+                    b.HasOne("FleXFrame.Core.Models.Role", "Role")
                         .WithMany("RolePermissions")
                         .HasForeignKey("RoleID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -270,15 +263,15 @@ namespace FleXFrame.Core.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("FleXFrameCore.UserAuth.Models.UserRole", b =>
+            modelBuilder.Entity("FleXFrame.Core.Models.UserRole", b =>
                 {
-                    b.HasOne("FleXFrameCore.UserAuth.Models.Role", "Role")
+                    b.HasOne("FleXFrame.Core.Models.Role", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FleXFrameCore.UserAuth.Models.User", "User")
+                    b.HasOne("FleXFrame.Core.Models.User", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -289,19 +282,19 @@ namespace FleXFrame.Core.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FleXFrameCore.UserAuth.Models.Permission", b =>
+            modelBuilder.Entity("FleXFrame.Core.Models.Permission", b =>
                 {
                     b.Navigation("RolePermissions");
                 });
 
-            modelBuilder.Entity("FleXFrameCore.UserAuth.Models.Role", b =>
+            modelBuilder.Entity("FleXFrame.Core.Models.Role", b =>
                 {
                     b.Navigation("RolePermissions");
 
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("FleXFrameCore.UserAuth.Models.User", b =>
+            modelBuilder.Entity("FleXFrame.Core.Models.User", b =>
                 {
                     b.Navigation("UserRoles");
                 });

@@ -19,11 +19,13 @@ namespace FleXFrame.Core.Models
         [MaxLength(20)]
         [ForeignKey("User")]
         public required string UserID { get; set; }
+        public required virtual User User { get; set; }
 
         [Required]
         [MaxLength(20)]
         [ForeignKey("Role")]
         public required string RoleID { get; set; }
+        public required virtual Role Role { get; set; }
 
         [Required]
         public required DateTime DateAssigned { get; set; }
@@ -35,9 +37,6 @@ namespace FleXFrame.Core.Models
         public bool IsPrimaryRole { get; set; }
 
         public DateTime? ExpiryDate { get; set; }
-
-        public required virtual User User { get; set; }
-        public required virtual Role Role { get; set; }
     }
 
 }
