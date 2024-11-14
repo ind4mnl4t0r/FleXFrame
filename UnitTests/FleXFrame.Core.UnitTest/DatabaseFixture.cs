@@ -23,8 +23,8 @@ public class DatabaseFixture : IDisposable
 
     private void SeedDatabase()
     {
-        Context.Users.Add(new User { UserID = "789", Username = "testuser", PasswordHash = new byte[0], PasswordSalt = new byte[0], Name = "test", CreatedBy = "testdata" });
-        Context.SaveChanges();
+        //Context.Users.Add(new User { UserID = "789", Username = "testuser", PasswordHash = new byte[0], PasswordSalt = new byte[0], Name = "test", CreatedBy = "testdata" });
+        //Context.SaveChanges();
     }
 
     public void Dispose()
