@@ -1,4 +1,5 @@
-﻿using FleXFrame.Core.Services;
+﻿using FleXFrame.AuthHub.Interfaces.IServices;
+using FleXFrame.AuthHub.Services;
 using FleXFrame.UtilityHub.WinForms.Services;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,9 @@ namespace FleXFrame.WinFormsApp
 {
     public partial class UserLoginForm : Form
     {
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
 
-        public UserLoginForm(UserService userService)
+        public UserLoginForm(IUserService userService)
         {
             InitializeComponent();
             _userService = userService;
@@ -27,24 +28,32 @@ namespace FleXFrame.WinFormsApp
             var _username = txtUsername.Text;
             var _password = txtPassword.Text;
 
-            if(string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_password))
+            if (string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_password))
             {
                 MessageBox.Show("Please fill all the fields");
                 return;
             }
 
-            bool isValidUser = await _userService.ValidateUserAsync(_username, _password);
 
-            if (isValidUser)
+            var result = await _userService.ValidateUserAsync(_username, _password);
+
+            if (result.IsSuccess && result.Data)
             {
                 FormFactory.OpenForm<DashboardForm>(closeCurrentForm: true);
+                //FormFactory.OpenForm(() => new DashboardForm());
+
             }
 
             else
             {
-                MessageBox.Show("invalid username or password");
+                MessageBox.Show(result.Error ?? "Invalid username or password");
             }
         }
 
+        private void btnCreate_Click(object sender, EventArgs e)
+        {
+            FormFactory.OpenForm(() => new UserRegistrationForm(_userService));
+            //FormFactory.OpenForm<UserRegistrationForm>(closeCurrentForm: true);
+        }
     }
 }

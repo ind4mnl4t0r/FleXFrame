@@ -1,8 +1,11 @@
-﻿using FleXFrame.Core;
-using FleXFrame.Core.DTOs;
-using FleXFrame.Core.Helpers;
-using FleXFrame.Core.Models;
-using FleXFrame.Core.Services;
+﻿using FleXFrame.AcademicSuite.Services;
+using FleXFrame.AuthHub;
+using FleXFrame.AcademicSuite;
+using FleXFrame.AuthHub.DTOs;
+using FleXFrame.AuthHub.DTOs.UserDtos;
+using FleXFrame.AuthHub.Helpers;
+using FleXFrame.AuthHub.Models;
+using FleXFrame.AuthHub.Services;
 using FleXFrame.UtilityHub;
 using FleXFrame.UtilityHub.ErrorHandling;
 using Microsoft.EntityFrameworkCore;
@@ -10,89 +13,101 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
+using FleXFrame.AcademicSuite.Interfaces.IRepositories;
+using FleXFrame.AcademicSuite.Repositories;
+using FleXFrame.AuthHub.Interfaces.IRepositories;
+using FleXFrame.AuthHub.Interfaces.IServices;
+using FleXFrame.AuthHub.Repositories;
+using FleXFrame.AcademicSuite.Interfaces.IServices;
 
 namespace FleXFrame.ConsoleApp
 {
     internal class Program
     {
+        private static ServiceProvider? _serviceProvider; // Nullable _serviceProvider
+
         static async Task Main(string[] args)
         {
             // Load configuration from appsettings.json
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            // Set up dependency injection
-            var serviceProvider = new ServiceCollection()
-                .AddDbContext<DataContext>(options =>
-                    options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionString")))
-                .AddAutoMapper(typeof(MappingProfiles)) // Register AutoMapper profile
-                .AddScoped<UserService>() // Register UserService
-                .BuildServiceProvider();
+            // Set up DI container
+            var serviceCollection = new ServiceCollection();
+            ConfigureServices(serviceCollection, configuration);
 
-            // Apply migrations (this happens only once, and the context will be disposed correctly by DI)
-            using (var scope = serviceProvider.CreateScope())
+            _serviceProvider = serviceCollection.BuildServiceProvider();
+
+            // Apply migrations
+            ApplyMigrations();
+
+            // Dispose service provider at the end of the application lifecycle
+            await _serviceProvider.DisposeAsync();
+        }
+
+        /// <summary>
+        /// Configures the services for dependency injection.
+        /// </summary>
+        private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        {
+            // Register multiple DbContexts with the same connection string
+            services.AddDbContext<AuthHubDataContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionString")));
+            services.AddDbContext<AcademicSuiteDataContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionString")));
+
+            // Add AutoMapper
+            services.AddAutoMapper(typeof(MappingProfiles));
+
+            // Add services and repositories for AuthHub
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserRepository, UserRepository>();
+
+            // Add services and repositories for AcademicSuite
+            //services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IStudentRepository, StudentRepository>();
+        }
+
+        /// <summary>
+        /// Applies pending migrations for all registered DbContexts.
+        /// </summary>
+        private static void ApplyMigrations()
+        {
+            if (_serviceProvider == null)
+                throw new InvalidOperationException("Service provider is not initialized.");
+
+            using (var scope = _serviceProvider.CreateScope())
             {
-                var context = scope.ServiceProvider.GetRequiredService<DataContext>();
-                context.Database.Migrate();
-                Console.WriteLine("Migration completed");
+                ApplyDbContextMigrations<AuthHubDataContext>(scope, "AuthHubDataContext");
+                ApplyDbContextMigrations<AcademicSuiteDataContext>(scope, "AcademicSuiteDataContext");
             }
+        }
 
-            // Example: Creating a new user
-            var userService = serviceProvider.GetService<UserService>();
+        /// <summary>
+        /// Generic method to apply migrations for a specific DbContext.
+        /// </summary>
+        private static void ApplyDbContextMigrations<TContext>(IServiceScope scope, string contextName) where TContext : DbContext
+        {
+            var context = scope.ServiceProvider.GetRequiredService<TContext>();
+            var pendingMigrations = context.Database.GetPendingMigrations();
 
-            if (userService == null)
+            if (pendingMigrations.Any())
             {
-                Console.WriteLine("UserService is not available.");
-                return;
-            }
-
-
-
-            // Generate a new user ID using the IDGenerator
-            using (var scope = serviceProvider.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetRequiredService<DataContext>();
-
-                // Generate salt and hash the password using PasswordEngine
-                string plainPassword = "YourSecurePassword"; // Replace with actual password input from the user
-                byte[] salt = PasswordEngine.GenerateSalt();
-                byte[] hashedPassword = PasswordEngine.HashPassword(plainPassword, salt);
-
-                // Create a new UserCreateDto object with hashed password and salt
-                var userDto = new UserCreateDto
+                Console.WriteLine($"Pending migrations for {contextName}:");
+                foreach (var migration in pendingMigrations)
                 {
-                    Username = "newuser",
-                    Name = "New User",
-                    PasswordHash = hashedPassword,
-                    PasswordSalt = salt,
-                    DateCreated = DateTime.Now,
-                    CreatedBy = "System"
-                };
-
-                // Generate a unique user ID for the new user
-                var latestUser = await context.Users.OrderByDescending(u => u.UserID).FirstOrDefaultAsync();
-                int sequenceNumber = 1;
-                if (latestUser?.UserID != null)
-                {
-                    var sequencePart = latestUser.UserID.Substring(latestUser.UserID.Length - 4);
-                    if (int.TryParse(sequencePart, out int latestSequence))
-                    {
-                        sequenceNumber = latestSequence + 1;
-                    }
+                    Console.WriteLine($" - {migration}");
                 }
-                string newUserID = IDGenerator.GenerateID("CUST-USER-{S}", sequenceNumber);
-
-                // Assign the generated ID to the user DTO
-                userDto.UserID = newUserID;
-
-                // Act: Create the user using the UserService and capture the generated UserID
-                string createdUserID = await userService.CreateUserAsync(userDto);
-
-                // Log the UserID to the console (whether it's custom or default)
-                Console.WriteLine($"User {userDto.Username} created successfully with UserID: {createdUserID}");
+                context.Database.Migrate();
+                Console.WriteLine($"{contextName} migrations applied.");
+            }
+            else
+            {
+                Console.WriteLine($"No pending migrations for {contextName}.");
             }
         }
     }
+
 }

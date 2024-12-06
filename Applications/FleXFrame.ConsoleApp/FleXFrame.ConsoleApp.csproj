@@ -25,8 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\FleXFrame.UtilityHub\FleXFrame.UtilityHub.csproj" />
-    <ProjectReference Include="..\..\Libraries\FleXFrame.Core\FleXFrame.Core.csproj" />
+    <ProjectReference Include="..\..\Libraries\AcademicSuite\FleXFrame.AcademicSuite\FleXFrame.AcademicSuite.csproj" />
+    <ProjectReference Include="..\..\Libraries\CoreSuite\FleXFrame.AuthHub\FleXFrame.AuthHub.csproj" />
+    <ProjectReference Include="..\..\Libraries\CoreSuite\FleXFrame.UtilityHub\FleXFrame.UtilityHub.csproj" />
   </ItemGroup>
 
   <ItemGroup>

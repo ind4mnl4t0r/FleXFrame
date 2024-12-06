@@ -1,10 +1,17 @@
-using FleXFrame.Core.Services;
-using FleXFrame.Core;
+using FleXFrame.AuthHub.Services;
+using FleXFrame.AuthHub;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using System;
-using FleXFrame.Core.Helpers;
+using FleXFrame.AuthHub.Helpers;
+using FleXFrame.AuthHub.Repositories;
+using FleXFrame.AuthHub.Interfaces.IRepositories;
+using FleXFrame.AuthHub.Interfaces.IServices;
+using FleXFrame.UtilityHub.WinForms.Services;
+using FleXFrame.AcademicSuite;
+using FleXFrame.AcademicSuite.Repositories;
+using FleXFrame.AcademicSuite.Interfaces.IRepositories;
 
 namespace FleXFrame.WinFormsApp
 {
@@ -18,7 +25,7 @@ namespace FleXFrame.WinFormsApp
         [STAThread]
         static void Main()
         {
-            // Set up configuration to read from appsettings.json
+            // Set up configuration
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -29,46 +36,68 @@ namespace FleXFrame.WinFormsApp
             ConfigureServices(serviceCollection, configuration);
             _serviceProvider = serviceCollection.BuildServiceProvider();
 
-            // Apply migrations (only in development, if required)
+            // Set the service provider in the class library
+            FormFactory.SetServiceProvider(_serviceProvider);
+
+            // Apply migrations
             ApplyMigrations();
 
             // Start the application
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            // Start the main form using the DI provider
-            var mainForm = _serviceProvider.GetRequiredService<DashboardForm>();
+            var mainForm = _serviceProvider.GetRequiredService<UserLoginForm>();
             Application.Run(mainForm);
         }
 
         private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            // Configure DbContext with SQL Server
-            services.AddDbContext<DataContext>(options =>
+            // Register multiple DbContexts with the same connection string
+            services.AddDbContext<AuthHubDataContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionString")));
+            services.AddDbContext<AcademicSuiteDataContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionString")));
 
-            // Register other services
+            // Add Automapper
             services.AddAutoMapper(typeof(MappingProfiles));
-            services.AddScoped<UserService>();
-            
 
-            // Register the main form so DI can inject services into it
-            services.AddScoped<DashboardForm>();
+            // Add services and repositories for AuthHub
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserRepository, UserRepository>();
+
+            // Add services and repositories for AcademicSuite
+            services.AddScoped<IStudentRepository, StudentRepository>();
+
+            // Register forms
+            services.AddTransient<UserLoginForm>();
+            services.AddTransient<DashboardForm>();
+            services.AddTransient<UserRegistrationForm>();
         }
 
         private static void ApplyMigrations()
         {
             if (_serviceProvider == null)
-            {
                 throw new InvalidOperationException("Service provider is not initialized.");
-            }
 
             using (var scope = _serviceProvider.CreateScope())
             {
-                var context = scope.ServiceProvider.GetRequiredService<DataContext>();
-                context.Database.Migrate();
-                Console.WriteLine("Migration completed");
+                // Apply migrations for AuthHubDataContext
+                var authHubContext = scope.ServiceProvider.GetRequiredService<AuthHubDataContext>();
+                authHubContext.Database.Migrate();
+                Console.WriteLine("AuthHubDataContext migrations applied.");
+
+                // Apply migrations for AcademicSuiteDataContext
+                var academicSuiteContext = scope.ServiceProvider.GetRequiredService<AcademicSuiteDataContext>();
+                academicSuiteContext.Database.Migrate();
+                Console.WriteLine("AcademicSuiteDataContext migrations applied.");
             }
+        }
+
+        public static Form ResolveForm<TForm>() where TForm : Form
+        {
+            if (_serviceProvider == null)
+                throw new InvalidOperationException("Service provider is not initialized.");
+
+            return _serviceProvider.GetRequiredService<TForm>();
         }
     }
 }

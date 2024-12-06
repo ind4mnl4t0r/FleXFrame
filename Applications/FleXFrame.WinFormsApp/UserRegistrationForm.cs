@@ -1,21 +1,23 @@
-using FleXFrame.Core.Helpers;
-using FleXFrame.Core.Services;
-using FleXFrame.Core;
+using FleXFrame.AuthHub.Helpers;
+using FleXFrame.AuthHub.Services;
+using FleXFrame.AuthHub;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using FleXFrame.Core.DTOs;
+using FleXFrame.AuthHub.DTOs;
 using FleXFrame.UtilityHub;
 using System;
+using FleXFrame.AuthHub.DTOs.UserDtos;
+using FleXFrame.AuthHub.Interfaces.IServices;
 
 namespace FleXFrame.WinFormsApp
 {
     public partial class UserRegistrationForm : Form
     {
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
         private string? _username, _password, _name;
 
-        public UserRegistrationForm(UserService userService)
+        public UserRegistrationForm(IUserService userService)
         {
             InitializeComponent();
             _userService = userService;
@@ -23,52 +25,59 @@ namespace FleXFrame.WinFormsApp
 
         private async void btnCreate_Click(object sender, EventArgs e)
         {
-            // Retrieve values from TextBox controls
-            _username = txtUsername.Text;
-            _password = txtPassword.Text;
-            _name = txtName.Text;
-
-            // Validate required fields
-            if (string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_password) || string.IsNullOrWhiteSpace(_name))
+            try
             {
-                MessageBox.Show("Please fill in all required fields.");
-                return;
-            }
+                // Retrieve values from TextBox controls
+                _username = txtUsername.Text;
+                _password = txtPassword.Text;
+                _name = txtName.Text;
 
-            // Generate salt and hash the password using PasswordEngine
-            byte[] salt = PasswordEngine.GenerateSalt();
-            byte[] hashedPassword = PasswordEngine.HashPassword(_password, salt);
-
-            // Get the latest user and determine the sequence number for new user ID
-            var latestUser = await _userService.GetLatestUserAsync();
-            int sequenceNumber = 1;
-            if (latestUser?.UserID != null)
-            {
-                var sequencePart = latestUser.UserID.Substring(latestUser.UserID.Length - 4);
-                if (int.TryParse(sequencePart, out int latestSequence))
+                // Validate required fields
+                if (string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_password) || string.IsNullOrWhiteSpace(_name))
                 {
-                    sequenceNumber = latestSequence + 1;
+                    MessageBox.Show("Please fill in all required fields.");
+                    return;
+                }
+
+                // Generate salt and hash the password using PasswordEngine
+                byte[] salt = PasswordEngine.GenerateSalt();
+                byte[] hashedPassword = PasswordEngine.HashPassword(_password, salt);
+
+                // Create the new UserCreateDto
+                var userCreateDto = new UserCreateDto
+                {
+                    Username = _username,
+                    Name = _name,
+                    PasswordHash = hashedPassword,
+                    PasswordSalt = salt,
+                    DateCreated = DateTime.Now,
+                    CreatedBy = "System"
+                };
+
+                // Act: Create the user using the UserService
+                var result = await _userService.CreateUserAsync(userCreateDto);
+                //string createdUserID =  _userService.GenerateUserID();
+
+                // Handle the result
+                // Display confirmation on the UI thread
+                if (result.IsSuccess)
+                {
+                    MessageBox.Show($"User {_username} created successfully with UserID: {result.Data}");
+                }
+                else
+                {
+                    MessageBox.Show(result.Error ?? "An error occurred while creating the user.");
                 }
             }
-            string newUserID = IDGenerator.GenerateID("CUST-USER-{S}", sequenceNumber);
-
-            // Create the new UserCreateDto
-            var userDto = new UserCreateDto
+            catch (InvalidOperationException ex)
             {
-                UserID = newUserID,
-                Username = _username,
-                Name = _name,
-                PasswordHash = hashedPassword,
-                PasswordSalt = salt,
-                DateCreated = DateTime.Now,
-                CreatedBy = "System"
-            };
+                MessageBox.Show(ex.Message);
+            }
 
-            // Act: Create the user using the UserService
-            string createdUserID = await _userService.CreateUserAsync(userDto);
-
-            // Display confirmation
-            MessageBox.Show($"User {_username} created successfully with UserID: {createdUserID}");
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}");
+            }
         }
     }
 }

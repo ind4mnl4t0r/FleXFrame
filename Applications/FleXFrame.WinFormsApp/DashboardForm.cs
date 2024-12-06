@@ -1,4 +1,5 @@
-﻿using FleXFrame.UtilityHub.WinForms.Services;
+﻿using FleXFrame.AuthHub.Interfaces.IServices;
+using FleXFrame.UtilityHub.WinForms.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -40,6 +41,8 @@ namespace FleXFrame.WinFormsApp
 
         private void button2_Click(object sender, EventArgs e)
         {
+            //FormFactory.OpenFormInPanel(splitContainer1, () => new UserRegistrationForm());
+            FormFactory.OpenFormInPanel<UserRegistrationForm>(splitContainer1);
             //FormFactory.OpenFormInPanel<UserRegistrationForm>(splitContainer1);
         }
     }

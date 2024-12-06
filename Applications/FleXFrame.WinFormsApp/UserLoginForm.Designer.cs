@@ -33,6 +33,7 @@
             btnLogin = new Button();
             label1 = new Label();
             txtUsername = new TextBox();
+            btnCreate = new Button();
             SuspendLayout();
             // 
             // label2
@@ -77,17 +78,28 @@
             txtUsername.Size = new Size(219, 23);
             txtUsername.TabIndex = 5;
             // 
-            // LoginForm
+            // btnCreate
+            // 
+            btnCreate.Location = new Point(99, 363);
+            btnCreate.Name = "btnCreate";
+            btnCreate.Size = new Size(111, 48);
+            btnCreate.TabIndex = 10;
+            btnCreate.Text = "Create";
+            btnCreate.UseVisualStyleBackColor = true;
+            btnCreate.Click += btnCreate_Click;
+            // 
+            // UserLoginForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(312, 450);
+            Controls.Add(btnCreate);
             Controls.Add(label2);
             Controls.Add(txtPassword);
             Controls.Add(btnLogin);
             Controls.Add(label1);
             Controls.Add(txtUsername);
-            Name = "LoginForm";
+            Name = "UserLoginForm";
             Text = "LoginForm";
             ResumeLayout(false);
             PerformLayout();
@@ -100,5 +112,6 @@
         private Button btnLogin;
         private Label label1;
         private TextBox txtUsername;
+        private Button btnCreate;
     }
 }
