@@ -1,18 +1,17 @@
-﻿
-using FleXFrame.Core;
+﻿using FleXFrame.AuthHub;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace FleXFrame.Core.UnitTest
+namespace FleXFrame.AuthHub.UnitTest
 {
     public class MigrationTest
     {
-        private readonly DbContextOptions<DataContext> _options;
+        private readonly DbContextOptions<AuthHubDataContext> _options;
 
         public MigrationTest()
         {
             var connectionString = "Data Source=MSI;Integrated Security=True;Database=TestDB;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
-            _options = new DbContextOptionsBuilder<DataContext>()
+            _options = new DbContextOptionsBuilder<AuthHubDataContext>()
                 .UseSqlServer(connectionString)
                 .Options;
         }
@@ -20,7 +19,7 @@ namespace FleXFrame.Core.UnitTest
         [Fact]
         public void CanApplyMigration()
         {
-            using (var context = new DataContext(_options))
+            using (var context = new AuthHubDataContext(_options))
             {
                 // Apply migrations in your test
                 context.Database.Migrate();

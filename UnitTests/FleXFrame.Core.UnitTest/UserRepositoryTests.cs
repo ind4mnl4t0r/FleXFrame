@@ -1,15 +1,15 @@
-﻿using FleXFrame.Core;
-using FleXFrame.Core.Models;
-using FleXFrame.Core.Repositories;
+﻿using FleXFrame.AuthHub;
+using FleXFrame.AuthHub.Models;
+using FleXFrame.AuthHub.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace FleXFrame.Core.UnitTest
+namespace FleXFrame.AuthHub.UnitTest
 {
     public class UserRepositoryTests
     {
         private readonly UserRepository _userRepository;
-        private readonly DbContextOptions<DataContext> _options;
+        private readonly DbContextOptions<AuthHubDataContext> _options;
 
         //public UserRepositoryTests()
         //{

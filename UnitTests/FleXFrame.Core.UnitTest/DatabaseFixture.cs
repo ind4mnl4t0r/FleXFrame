@@ -1,18 +1,18 @@
-﻿using FleXFrame.Core;
-using FleXFrame.Core.Models;
+﻿using FleXFrame.AuthHub;
+using FleXFrame.AuthHub.Models;
 using Microsoft.EntityFrameworkCore;
 
 public class DatabaseFixture : IDisposable
 {
-    public DataContext Context { get; private set; }
+    public AuthHubDataContext Context { get; private set; }
 
     public DatabaseFixture()
     {
-        var options = new DbContextOptionsBuilder<DataContext>()
+        var options = new DbContextOptionsBuilder<AuthHubDataContext>()
             .UseSqlServer("Data Source=MSI;Integrated Security=True;Database=TestDB;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False") // Replace with your SQL Server connection string
             .Options;
 
-        Context = new DataContext(options);
+        Context = new AuthHubDataContext(options);
 
         // Ensure the database is created and apply migrations
         Context.Database.Migrate();

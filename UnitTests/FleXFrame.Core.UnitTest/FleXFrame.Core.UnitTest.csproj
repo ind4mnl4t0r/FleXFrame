@@ -32,8 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\FleXFrame.Core\FleXFrame.Core.csproj" />
-    <ProjectReference Include="..\..\Libraries\FleXFrame.UtilityHub\FleXFrame.UtilityHub.csproj" />
+    <ProjectReference Include="..\..\Libraries\CoreSuite\FleXFrame.AuthHub\FleXFrame.AuthHub.csproj" />
   </ItemGroup>
 
 </Project>
