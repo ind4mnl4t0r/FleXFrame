@@ -39,7 +39,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(47, 165);
+            label2.Location = new Point(29, 120);
             label2.Name = "label2";
             label2.Size = new Size(57, 15);
             label2.TabIndex = 9;
@@ -47,14 +47,14 @@
             // 
             // txtPassword
             // 
-            txtPassword.Location = new Point(47, 183);
+            txtPassword.Location = new Point(29, 138);
             txtPassword.Name = "txtPassword";
             txtPassword.Size = new Size(219, 23);
             txtPassword.TabIndex = 8;
             // 
             // btnLogin
             // 
-            btnLogin.Location = new Point(99, 296);
+            btnLogin.Location = new Point(79, 203);
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(111, 48);
             btnLogin.TabIndex = 7;
@@ -64,8 +64,9 @@
             // 
             // label1
             // 
+            label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label1.AutoSize = true;
-            label1.Location = new Point(47, 106);
+            label1.Location = new Point(29, 61);
             label1.Name = "label1";
             label1.Size = new Size(60, 15);
             label1.TabIndex = 6;
@@ -73,14 +74,15 @@
             // 
             // txtUsername
             // 
-            txtUsername.Location = new Point(47, 124);
+            txtUsername.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            txtUsername.Location = new Point(29, 79);
             txtUsername.Name = "txtUsername";
             txtUsername.Size = new Size(219, 23);
             txtUsername.TabIndex = 5;
             // 
             // btnCreate
             // 
-            btnCreate.Location = new Point(99, 363);
+            btnCreate.Location = new Point(79, 270);
             btnCreate.Name = "btnCreate";
             btnCreate.Size = new Size(111, 48);
             btnCreate.TabIndex = 10;
@@ -92,14 +94,17 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(312, 450);
+            ClientSize = new Size(278, 383);
+            ControlBox = false;
             Controls.Add(btnCreate);
             Controls.Add(label2);
             Controls.Add(txtPassword);
             Controls.Add(btnLogin);
             Controls.Add(label1);
             Controls.Add(txtUsername);
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Name = "UserLoginForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "LoginForm";
             ResumeLayout(false);
             PerformLayout();

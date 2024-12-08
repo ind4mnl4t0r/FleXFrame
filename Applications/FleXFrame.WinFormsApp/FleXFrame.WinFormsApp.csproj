@@ -35,4 +35,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Helper\" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
 </Project>

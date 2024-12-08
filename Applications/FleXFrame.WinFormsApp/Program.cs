@@ -12,6 +12,7 @@ using FleXFrame.UtilityHub.WinForms.Services;
 using FleXFrame.AcademicSuite;
 using FleXFrame.AcademicSuite.Repositories;
 using FleXFrame.AcademicSuite.Interfaces.IRepositories;
+using FleXFrame.UtilityHub.WinForms.Helpers;
 
 namespace FleXFrame.WinFormsApp
 {
@@ -45,12 +46,21 @@ namespace FleXFrame.WinFormsApp
             // Start the application
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            var mainForm = _serviceProvider.GetRequiredService<UserLoginForm>();
+            var mainForm = _serviceProvider.GetRequiredService<DashboardForm>();
             Application.Run(mainForm);
         }
 
         private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
+            // Retrieve values from configuration (e.g., appsettings.json)
+            var secretKey = configuration["Jwt:SecretKey"];
+            if (string.IsNullOrWhiteSpace(secretKey))
+            {
+                throw new InvalidOperationException("JWT SecretKey is not configured in the application settings.");
+            }
+
+            var expiryInMinutes = int.Parse(configuration["Jwt:ExpiryInMinutes"] ?? "30"); // Default to 30 minutes if not found
+
             // Register multiple DbContexts with the same connection string
             services.AddDbContext<AuthHubDataContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionString")));
@@ -63,6 +73,10 @@ namespace FleXFrame.WinFormsApp
             // Add services and repositories for AuthHub
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<ISessionRepository, SessionRepository>();
+            services.AddSingleton(new JwtHelper(secretKey, expiryInMinutes));
+            services.AddSingleton<InteractionTracker>();
 
             // Add services and repositories for AcademicSuite
             services.AddScoped<IStudentRepository, StudentRepository>();
@@ -71,6 +85,9 @@ namespace FleXFrame.WinFormsApp
             services.AddTransient<UserLoginForm>();
             services.AddTransient<DashboardForm>();
             services.AddTransient<UserRegistrationForm>();
+            services.AddTransient<HomeForm>();
+            services.AddTransient<StudentPaymentForm>();
+            services.AddTransient<SettingsForm>();
         }
 
         private static void ApplyMigrations()
