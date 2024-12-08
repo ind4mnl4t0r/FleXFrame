@@ -56,7 +56,7 @@ namespace FleXFrame.AuthHub.Services
         }
 
 
-        public async Task<Result<bool>> ValidateUserAsync(string username, string password)
+        public async Task<Result<User>> ValidateUserAsync(string username, string password)
         {
             try
             {
@@ -65,14 +65,14 @@ namespace FleXFrame.AuthHub.Services
 
                 // If user is not found, return failure
                 if (user == null)
-                    return Result<bool>.Failure("Invalid username or password.");
+                    return Result<User>.Failure("Invalid username or password.");
 
                 var userValidationDto = _mapper.Map<UserValidationDto>(user);
 
                 // Check if password salt or hash are null
                 if (userValidationDto.PasswordSalt == null || userValidationDto.PasswordHash == null)
                 {
-                    return Result<bool>.Failure("Invalid user credentials.");
+                    return Result<User>.Failure("Invalid user credentials.");
                 }
 
                 // Hash the input password with the stored salt
@@ -81,18 +81,19 @@ namespace FleXFrame.AuthHub.Services
                 // Compare the hashed password with the stored hash
                 if (!hashedPassword.SequenceEqual(userValidationDto.PasswordHash))
                 {
-                    return Result<bool>.Failure("Invalid username or password.");
+                    return Result<User>.Failure("Invalid username or password.");
                 }
 
-                // Return success if validation passes
-                return Result<bool>.Success(true);
+                // Return the user object if validation passes
+                return Result<User>.Success(user);
             }
             catch (Exception ex)
             {
                 // Log the exception (optional) and return a failure result
-                return Result<bool>.Failure($"An error occurred during validation: {ex.Message}");
+                return Result<User>.Failure($"An error occurred during validation: {ex.Message}");
             }
         }
+
 
 
         public async Task<Result<UserViewDto>> GetUserByIdAsync(string userID)

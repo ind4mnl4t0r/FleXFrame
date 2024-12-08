@@ -61,6 +61,7 @@ namespace FleXFrame.AuthHub.Models
         public string? ModifiedBy { get; set; }
 
         public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public virtual ICollection<Session> Sessions { get; set; } = new List<Session>();
     }
 
 }

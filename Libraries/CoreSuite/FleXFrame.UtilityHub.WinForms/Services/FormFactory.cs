@@ -139,6 +139,19 @@ namespace FleXFrame.UtilityHub.WinForms.Services
             OpenForm(() => new T(), data, showAsDialog, closeCurrentForm);
         }
 
+        public static DialogResult OpenFormAsDialog<T>() where T : Form
+        {
+            if (_serviceProvider == null)
+            {
+                throw new InvalidOperationException("Service provider is not initialized.");
+            }
+
+            // Resolve the form from the DI container
+            var form = _serviceProvider.GetRequiredService<T>();
+
+            // Show the form as a modal dialog
+            return form.ShowDialog();
+        }
 
     }
 

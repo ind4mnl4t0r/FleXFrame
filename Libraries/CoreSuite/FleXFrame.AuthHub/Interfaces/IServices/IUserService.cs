@@ -12,7 +12,7 @@ namespace FleXFrame.AuthHub.Interfaces.IServices
     public interface IUserService
     {
         Task<Result<string>> CreateUserAsync(UserCreateDto userCreateDto);
-        Task<Result<bool>> ValidateUserAsync(string username, string password);
+        Task<Result<User>> ValidateUserAsync(string username, string password);
         Task<Result<UserViewDto>> GetUserByIdAsync(string userID);
         Task<User?> UpdateUserPasswordAsync(UserPasswordUpdateDto userPasswordUpdateDto);
         Task<User?> UpdateUserProfileAsync(UserProfileUpdateDto userProfileUpdateDto);
